@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model UserSubscription {
+  id            String   @id @default(cuid())
+  userId        String
+  plan          SubscriptionPlan // Enum: "FREE", "PRO", "UNLIMITED"
+  credits       Int
+  isActive      Boolean
+  endDate       DateTime? // Nullable: Free plans may not have end dates
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId, isActive]) // Optimize queries for active subscriptions
+}
+
+enum SubscriptionPlan {
+  FREE
+  PRO
+  UNLIMITED
+}
